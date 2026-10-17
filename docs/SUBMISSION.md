@@ -17,6 +17,8 @@ The bridge does not make network requests, access service credentials, collect t
 
 The source ships directly as CommonJS with no build step or runtime npm dependencies. Development dependencies are for tests and lint only. ESLint exceptions are documented in eslint.config.mjs.
 
-## Submission
+## Community listing
 
-Follow the current official directory workflow at https://community.obsidian.md: sign in, connect the repository owner's GitHub account, and select Plugins → New plugin. Submit the public repository URL above after its matching release assets exist. The account owner must review and accept developer policies and the maintenance commitment. GitHub publication is not itself submission or community approval.
+Public listing: https://community.obsidian.md/plugins/reading-progress-sync-bridge
+
+Install through the listing's Add to Obsidian button or search for Reading Progress Sync Bridge in Obsidian's Community plugins browser. Install and enable both dependencies on each computer as described in the README.

@@ -1,10 +1,25 @@
 # Reading Progress Sync Bridge
 
-独立连接 **Remember cursor position** 与 **Remotely Save**，同步 Markdown 阅读进度并核对冲突。
+[中文介绍](#中文介绍) · [English](#english) · [Obsidian 社区 / Community](https://community.obsidian.md/plugins/reading-progress-sync-bridge) · [GitHub Releases](https://github.com/DLf2001/reading-progress-sync-bridge/releases/latest)
+
+## 中文介绍
+
+在多台电脑之间同步 Obsidian 的 Markdown 阅读进度，换一台电脑也能接着阅读。本插件连接 **Remember cursor position** 与 **Remotely Save**，按最后阅读更新时间合并位置，并处理进度冲突。
+
+**每台电脑都需要安装并启用这三个插件：Remember cursor position、Remotely Save 和 Reading Progress Sync Bridge。** 前者负责记录与恢复位置，Remotely Save 负责云端同步，本插件负责进度合并、核对和完成提示。
 
 版本 0.1.1。基准环境：Obsidian 1.14.4、Remember cursor position 1.0.16、Remotely Save 0.5.25。
 
-由 [DLf2001](https://github.com/DLf2001) 维护的独立第三方插件，与 Obsidian、Remember cursor position 和 Remotely Save 官方无隶属关系。当前发布仅支持桌面版 Obsidian 1.14.4 及以上。发布到 GitHub 不表示已经通过 Obsidian 社区审核。
+由 [DLf2001](https://github.com/DLf2001) 维护的独立第三方插件，与 Obsidian、Remember cursor position 和 Remotely Save 官方无隶属关系。支持桌面版 Obsidian 1.14.4 及以上，可从 [Obsidian 社区页面](https://community.obsidian.md/plugins/reading-progress-sync-bridge) 安装。
+
+## 主要功能
+
+- **多电脑阅读接力**：每台设备保存独立进度记录，通过同一个远程知识库交换。
+- **按最后阅读时间合并**：采用更新时间更晚的位置，而不是读得最远的位置，支持向前翻阅后继续接力。
+- **自动联动同步**：连接 Remotely Save 的手动、定时、启动和保存触发同步，同步前导出、成功后核对并合并。
+- **冲突与异常处理**：同一时间但位置不同的记录由用户选择，异常数据和明显超前的设备时间不会直接覆盖进度。
+- **位置恢复与备份**：配合 Remember cursor position 恢复位置，支持同步后立即跳转，导入前备份本机进度。
+- **2 秒完成提示**：同步完成、手动跳转完成时显示应用内小提示；同步后立即跳转时合并为一条提示。
 
 ## 工作方式
 
@@ -21,15 +36,25 @@
 
 ## 安装与多电脑配置
 
-每台电脑均需安装并启用上述两个依赖及本插件。将本项目 `main.js`、`manifest.json`、`styles.css` 放入：
+### 从社区安装（推荐）
+
+1. 在 Obsidian 的「设置 → 第三方插件 → 浏览」中搜索 **Reading Progress Sync Bridge**，安装并启用。
+2. 也可以打开 [社区插件页面](https://community.obsidian.md/plugins/reading-progress-sync-bridge)，点击 **Add to Obsidian**，在 Obsidian 中安装并启用。
+3. 安装并启用 **Remember cursor position** 和 **Remotely Save**。
+
+### 手动安装
+
+从 [GitHub Releases](https://github.com/DLf2001/reading-progress-sync-bridge/releases/latest) 下载同一版本的 `main.js`、`manifest.json`、`styles.css`，放入：
 
 ```
 <知识库>/.obsidian/plugins/reading-progress-sync-bridge/
 ```
 
-重启 Obsidian，在第三方插件中启用 **Reading Progress Sync Bridge**。在设置中给每台电脑设置易区分的名称。
+重启 Obsidian，在第三方插件中启用 **Reading Progress Sync Bridge**。上述两个依赖插件也需安装并启用。
 
-三个安装文件可从 [GitHub Releases](https://github.com/DLf2001/reading-progress-sync-bridge/releases/latest) 下载。社区审核通过前请使用手动安装，不要假设已能在社区插件列表中搜索到。
+### 多电脑配置
+
+每台电脑都重复安装步骤，在本插件设置中给设备设置易区分的名称。
 
 Remotely Save 必须连接同一个远程知识库，使用**双向同步**，并允许同步 `阅读进度同步/` 下的 JSON 文件。不要将原插件的数据文件路径改到共享目录；保持默认 `.obsidian/plugins/remember-cursor-position/cursor-positions.json`。桥接插件负责把合并结果写回这个本机数据库。
 
@@ -71,13 +96,32 @@ Remotely Save 必须连接同一个远程知识库，使用**双向同步**，�
 
 Sync Markdown reading positions across multiple computers by connecting **Remember cursor position** and **Remotely Save**. Each device writes its own progress file; the latest actual reading timestamp wins, even if that reader moved backward. Different positions with the same timestamp require a manual choice.
 
-### Requirements and installation
+**Install and enable all three plugins on every computer: Remember cursor position, Remotely Save, and Reading Progress Sync Bridge.** Remember cursor position records and restores positions, Remotely Save handles cloud synchronization, and this bridge merges progress, checks records, and shows completion notices.
+
+### Features
+
+- **Multi-computer reading handoff:** exchange independent per-device progress records through the same remote vault.
+- **Latest reading time wins:** adopt the most recently updated position, not the farthest position, including when you move backward in a note.
+- **Automatic sync integration:** connect to manual, scheduled, startup, and save-triggered Remotely Save runs; export before syncing and check and merge afterward.
+- **Conflict and anomaly handling:** manually choose between different positions with equal timestamps; skip malformed records and clearly future-dated timestamps.
+- **Restoration and backups:** restore with Remember cursor position, optionally jump after syncing, and back up local positions before importing changes.
+- **Two-second completion notices:** show an in-app notice after syncing or manually restoring a position, with one combined notice for sync followed by immediate restoration.
+
+### Requirements
 
 - Obsidian Desktop 1.14.4 or later. Mobile and PDF are not supported in this release.
 - Remember cursor position 1.0.16 and Remotely Save 0.5.25, installed and enabled.
 - Remotely Save configured for bidirectional synchronization to the same remote vault on every computer, including the `阅读进度同步/` folder.
 
-Download `main.js`, `manifest.json`, and `styles.css` from [Releases](https://github.com/DLf2001/reading-progress-sync-bridge/releases/latest), put them in `<vault>/.obsidian/plugins/reading-progress-sync-bridge/`, and enable the plugin. Settings and notices currently use Simplified Chinese. Give each computer a distinct device name. Device IDs are stored locally, not in shared plugin settings.
+### Installation
+
+**Community installation (recommended):** open **Settings → Community plugins → Browse**, search for **Reading Progress Sync Bridge**, then install and enable it. Alternatively, open the [community listing](https://community.obsidian.md/plugins/reading-progress-sync-bridge) and select **Add to Obsidian**. Also install and enable **Remember cursor position** and **Remotely Save**.
+
+**Manual installation:** download `main.js`, `manifest.json`, and `styles.css` from the same [GitHub release](https://github.com/DLf2001/reading-progress-sync-bridge/releases/latest), put them in `<vault>/.obsidian/plugins/reading-progress-sync-bridge/`, restart Obsidian, and enable the plugin together with its two dependencies.
+
+### Multi-computer setup and usage
+
+Repeat installation on every computer and configure Remotely Save for bidirectional synchronization to the same remote vault. Settings and notices currently use Simplified Chinese. Give each computer a distinct device name. Device IDs are stored locally, not in shared plugin settings. Use the local export-and-check action, then synchronize with Remotely Save as usual.
 
 The bridge exports saved positions before synchronization and validates and merges downloaded device records after Remotely Save reports success. It backs up the local position database before import. Failed synchronization does not import remote progress. By default, the current page does not jump; reopen the note or use the restore-current command. Changes made during a transfer are preserved for the next synchronization.
 
@@ -89,6 +133,6 @@ If configuration-directory synchronization is enabled, use the bridge's exclusio
 
 This plugin makes no network requests, reads no service credentials, collects no telemetry, and accesses no files outside the vault. Shared records contain note paths, positions, device names, and reading timestamps, not note contents. Those metadata are synchronized through the service and encryption settings you configure in Remotely Save. A remote service may require an account or payment; this bridge itself is free.
 
-The integration wraps non-public runtime methods and restores them when disabled, without modifying dependency source files. Dependency updates may require compatibility changes. The synchronization check covers the sync result callback, local file readback, and downloaded record validity. Keep backups. GitHub publication does not imply Obsidian community approval.
+The integration wraps non-public runtime methods and restores them when disabled, without modifying dependency source files. Dependency updates may require compatibility changes. The synchronization check covers the sync result callback, local file readback, and downloaded record validity. Keep backups. Notes are matched by relative path; renaming notes or changing their content or window layout can affect position matching and restoration.
 
 This independent companion plugin is maintained by [DLf2001](https://github.com/DLf2001), is not affiliated with Obsidian or its dependencies, and is licensed under [MIT](LICENSE).
