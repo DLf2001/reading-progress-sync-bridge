@@ -158,7 +158,7 @@ class BridgeSettings extends PluginSettingTab {
       .addButton(button => button.setButtonText("检查配置").onClick(async () => {
         try { await bridge.checkConfiguration(); new Notice("阅读进度同步配置检查通过"); }
         catch (error) { bridge.fail(error); }
-        this.display();
+        this.update();
       }));
     new Setting(this.containerEl).setName("本机导出验证").setDesc("保存并检查本机的进度文件，不发起云同步，也不导入其他设备的记录。")
       .addButton(button => button.setButtonText("导出并检查").onClick(() => bridge.exportAndCheck()));
