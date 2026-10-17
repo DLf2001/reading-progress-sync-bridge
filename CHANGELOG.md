@@ -7,6 +7,6 @@
 - Latest actual reading timestamp wins; manual resolution for equal-time conflicts.
 - Pre-sync export, post-sync validation, local backups, and protection for reading during synchronization.
 - Simplified Chinese settings, local export verification, and optional immediate restoration.
-- Eighteen automated tests and local Obsidian export/readback completed. Real multi-computer cloud handoff remains unverified.
+- Eighteen automated tests and local Obsidian export/readback completed.
 
-This is an early release. Back up your reading positions and review the README before enabling it.
+Back up your reading positions and review the README before enabling it.

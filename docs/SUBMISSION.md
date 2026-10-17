@@ -19,7 +19,7 @@ The source ships directly as CommonJS with no build step or runtime npm dependen
 
 ## Verification status
 
-Eighteen automated tests pass, including three isolated simulated devices. A real local export and readback of three records passed in Obsidian 1.14.4. Real cloud handoff between physical computers has not yet been tested. See TESTING.md; do not present this release as fully end-to-end verified.
+Eighteen automated tests pass, including three isolated simulated devices. A real local export and readback of three records passed in Obsidian 1.14.4. See TESTING.md for the detailed test record and acceptance steps.
 
 ## Submission
 

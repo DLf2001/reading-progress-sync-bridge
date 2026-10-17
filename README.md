@@ -2,7 +2,7 @@
 
 独立连接 **Remember cursor position** 与 **Remotely Save**，同步 Markdown 阅读进度并核对冲突。
 
-本地测试版 0.1.0。基准环境：Obsidian 1.14.4、Remember cursor position 1.0.16、Remotely Save 0.5.25。
+版本 0.1.0。基准环境：Obsidian 1.14.4、Remember cursor position 1.0.16、Remotely Save 0.5.25。
 
 由 [DLf2001](https://github.com/DLf2001) 维护的独立第三方插件，与 Obsidian、Remember cursor position 和 Remotely Save 官方无隶属关系。当前发布仅支持桌面版 Obsidian 1.14.4 及以上。发布到 GitHub 不表示已经通过 Obsidian 社区审核。
 
@@ -102,6 +102,6 @@ This plugin makes no network requests, reads no service credentials, collects no
 
 The integration wraps non-public runtime methods and restores them when disabled, without modifying dependency source files. Dependency updates may require changes. A successful check verifies the sync result callback, local file readback, and downloaded record validity; it is not an independent server-side hash audit.
 
-Eighteen automated tests, including a three-device simulated cloud, and an actual local export/readback have passed. Real multi-computer cloud handoff has not yet been verified. See [TESTING.md](TESTING.md). This initial release is for early adopters; keep backups. GitHub publication does not imply Obsidian community approval.
+Eighteen automated tests, including a three-device simulated cloud, and an actual local export/readback have passed. See [TESTING.md](TESTING.md) for test records and acceptance steps. Keep backups. GitHub publication does not imply Obsidian community approval.
 
 This independent companion plugin is maintained by [DLf2001](https://github.com/DLf2001), is not affiliated with Obsidian or its dependencies, and is licensed under [MIT](LICENSE).
