@@ -2,7 +2,7 @@
 
 独立连接 **Remember cursor position** 与 **Remotely Save**，同步 Markdown 阅读进度并核对冲突。
 
-版本 0.1.0。基准环境：Obsidian 1.14.4、Remember cursor position 1.0.16、Remotely Save 0.5.25。
+版本 0.1.1。基准环境：Obsidian 1.14.4、Remember cursor position 1.0.16、Remotely Save 0.5.25。
 
 由 [DLf2001](https://github.com/DLf2001) 维护的独立第三方插件，与 Obsidian、Remember cursor position 和 Remotely Save 官方无隶属关系。当前发布仅支持桌面版 Obsidian 1.14.4 及以上。发布到 GitHub 不表示已经通过 Obsidian 社区审核。
 
@@ -42,6 +42,7 @@ Remotely Save 必须连接同一个远程知识库，使用**双向同步**，�
 - 默认同步后不打断当前阅读；下次打开笔记由 Remember cursor position 恢复位置。
 - 希望立刻跳转，可执行命令“恢复当前笔记的已合并阅读位置”，或开启设置中的同步后跳转。
 - 状态栏区分等待连接、正在核对、核对完成、异常、冲突及待下次上传。
+- 同步完成或手动跳转完成后显示应用内小提示，2 秒后自动消失；同步后立即跳转时合并为一条提示。异常和冲突继续使用原有提醒。
 - 同步过程中继续阅读的新位置，或手动解决冲突的结果，标为待上传，**下次**同步发送。
 - 时间相同的位置冲突，在“查看冲突”中选择设备记录。此选择会生成新的更新时间，代表这次人为确认。
 - 数据异常只跳过有问题的设备文件，不修改或删除它。
@@ -79,6 +80,8 @@ Sync Markdown reading positions across multiple computers by connecting **Rememb
 Download `main.js`, `manifest.json`, and `styles.css` from [Releases](https://github.com/DLf2001/reading-progress-sync-bridge/releases/latest), put them in `<vault>/.obsidian/plugins/reading-progress-sync-bridge/`, and enable the plugin. Settings and notices currently use Simplified Chinese. Give each computer a distinct device name. Device IDs are stored locally, not in shared plugin settings.
 
 The bridge exports saved positions before synchronization and validates and merges downloaded device records after Remotely Save reports success. It backs up the local position database before import. Failed synchronization does not import remote progress. By default, the current page does not jump; reopen the note or use the restore-current command. Changes made during a transfer are preserved for the next synchronization.
+
+Successful synchronization and manual position restoration show an in-app notice for two seconds. Synchronization followed by immediate restoration uses one combined notice. Errors and conflicts keep their existing alerts.
 
 If configuration-directory synchronization is enabled, use the bridge's exclusion-rule button to exclude the original position database and this plugin's local state and backups. Keep the original position database in its default plugin directory. Enable automatic clock synchronization on every computer; timestamps alone cannot resolve small clock skew.
 

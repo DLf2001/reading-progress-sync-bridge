@@ -11,16 +11,17 @@ const BASE_TIME = 1792210000000;
 function load(clock = { now: BASE_TIME }) {
   class Clock extends Date { static now() { return clock.now; } }
   const notices = [];
+  const noticeDetails = [];
   const context = {
     module: { exports: {} }, Date: Clock, Error, TextEncoder, Map, Set, window: { crypto: webcrypto },
     require: name => {
       assert.equal(name, "obsidian");
       return { Plugin: class {}, PluginSettingTab: class {}, Setting: class {}, Modal: class {},
-        Notice: class { constructor(text) { notices.push(text); } }, MarkdownView: class {} };
+        Notice: class { constructor(text, duration) { notices.push(text); noticeDetails.push({ text, duration }); } }, MarkdownView: class {} };
     },
   };
   vm.runInNewContext(source, context);
-  return { Bridge: context.module.exports, core: context.module.exports.internals, notices };
+  return { Bridge: context.module.exports, core: context.module.exports.internals, notices, noticeDetails };
 }
 
 const p = (line, scroll = line) => ({ scroll, cursor: { from: { line, ch: 0 }, to: { line, ch: 0 } } });
@@ -43,7 +44,7 @@ class MemoryAdapter {
 }
 
 async function device(id, cloud, initial = {}, clock = { now: BASE_TIME }) {
-  const { Bridge, notices } = load(clock);
+  const { Bridge, notices, noticeDetails } = load(clock);
   const bridge = new Bridge();
   const adapter = new MemoryAdapter();
   const dbPath = ".obsidian/plugins/remember-cursor-position/cursor-positions.json";
@@ -93,7 +94,7 @@ async function device(id, cloud, initial = {}, clock = { now: BASE_TIME }) {
     dbWriteTail: Promise.resolve(), statusEl: { setText() {} },
   });
   await bridge.connect();
-  return { bridge, adapter, rcp, remote, clock, notices, get syncCalls() { return syncCalls; } };
+  return { bridge, adapter, rcp, remote, clock, notices, noticeDetails, get syncCalls() { return syncCalls; } };
 }
 
 test("latest actual reading time wins, even when the latest reader moved backward", () => {
@@ -291,4 +292,60 @@ test("a local read that changes during backup is not overwritten by downloaded s
   await b.remote.syncRun();
   assert.equal(b.rcp.db["Book.md"].scroll, 99);
   assert.equal(b.bridge.report.pendingUpload, true);
+});
+
+test("successful manual and automatic synchronization show a two-second completion notice", async () => {
+  const d = await device("device-a1", new Map());
+  for (const trigger of ["manual", "auto", "auto_once_init", "auto_sync_on_save"]) {
+    d.noticeDetails.length = 0;
+    await d.remote.syncRun(trigger);
+    assert.deepEqual(d.noticeDetails, [{ text: "阅读进度同步完成", duration: 2000 }]);
+  }
+});
+
+test("manual restore shows a two-second notice only after applying the position", async () => {
+  const d = await device("device-a1", new Map(), { "Book.md": { ...p(19), lastModified: BASE_TIME } });
+  d.bridge.app.workspace.getActiveViewOfType = () => ({ file: { path: "Book.md" } });
+  assert.equal(d.bridge.restoreCurrent(), true);
+  assert.equal(d.rcp.restored.scroll, 19);
+  assert.deepEqual(d.noticeDetails, [{ text: "已跳转到保存的阅读位置", duration: 2000 }]);
+});
+
+test("sync with immediate restore combines completion into a single two-second notice", async () => {
+  const cloud = new Map();
+  const a = await device("device-a1", cloud, { "Book.md": { ...p(25), lastModified: BASE_TIME } });
+  await a.remote.syncRun();
+  const b = await device("device-b1", cloud);
+  b.bridge.settings.restoreActive = true;
+  b.bridge.app.workspace.getActiveViewOfType = () => ({ file: { path: "Book.md" } });
+  await b.remote.syncRun();
+  assert.equal(b.rcp.restored.scroll, 25);
+  assert.deepEqual(b.noticeDetails, [{ text: "阅读进度同步并跳转完成", duration: 2000 }]);
+});
+
+test("failed sync, conflicts, dry runs, and missing positions never show a success notice", async () => {
+  const d = await device("device-a1", new Map());
+  d.remote.fail = true;
+  await d.remote.syncRun();
+  assert.equal(d.noticeDetails.some(n => n.duration === 2000), false);
+  d.remote.fail = false;
+  d.noticeDetails.length = 0;
+  await d.remote.syncRun("dry");
+  assert.equal(d.noticeDetails.length, 0);
+  assert.equal(d.bridge.restoreCurrent(), false);
+  assert.equal(d.noticeDetails.some(n => n.duration === 2000), false);
+  const cloud = new Map();
+  const a = await device("device-a1", cloud, { "Book.md": { ...p(10), lastModified: BASE_TIME } });
+  const b = await device("device-b1", cloud, { "Book.md": { ...p(20), lastModified: BASE_TIME } });
+  await a.remote.syncRun();
+  await b.remote.syncRun();
+  assert.equal(b.noticeDetails.some(n => n.duration === 2000), false);
+  assert.equal(b.noticeDetails.some(n => n.duration === 8000 && /冲突/.test(n.text)), true);
+});
+
+test("pending changes are disclosed in the two-second synchronization notice", async () => {
+  const d = await device("device-a1", new Map(), { "Book.md": { ...p(10), lastModified: BASE_TIME - 1000 } });
+  d.remote.duringSync = async () => { d.rcp.db["Book.md"] = { ...p(30), lastModified: BASE_TIME }; };
+  await d.remote.syncRun();
+  assert.deepEqual(d.noticeDetails, [{ text: "阅读进度同步完成，新进度待下次上传", duration: 2000 }]);
 });

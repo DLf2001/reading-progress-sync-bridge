@@ -3,7 +3,7 @@
 - Name: Reading Progress Sync Bridge
 - ID: `reading-progress-sync-bridge`
 - Repository: https://github.com/DLf2001/reading-progress-sync-bridge
-- Version: 0.1.0
+- Version: 0.1.1
 - Author: DLf2001
 - License: MIT
 - Desktop only; Obsidian 1.14.4 or later; Markdown only.

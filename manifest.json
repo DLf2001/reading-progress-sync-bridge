@@ -1,7 +1,7 @@
 {
   "id": "reading-progress-sync-bridge",
   "name": "Reading Progress Sync Bridge",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "minAppVersion": "1.14.4",
   "description": "Sync and verify reading positions through Remember Cursor Position and Remotely Save.",
   "author": "DLf2001",

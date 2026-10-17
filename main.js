@@ -415,7 +415,11 @@ module.exports = class ReadingProgressSyncBridge extends ObsidianPlugin {
       }
       // Reading may have continued while a cloud transfer was in flight.
       const afterText = await this.captureLocal();
-      await this.reconcile(afterText !== exported);
+      const restored = await this.reconcile(afterText !== exported);
+      if (!this.conflicts.length && !this.report.issues.length) {
+        const message = restored ? "阅读进度同步并跳转完成" : "阅读进度同步完成";
+        new Notice(this.report.pendingUpload ? `${message}，新进度待下次上传` : message, 2000);
+      }
       return syncReturn;
     } catch (error) {
       this.fail(error);
@@ -491,7 +495,8 @@ module.exports = class ReadingProgressSyncBridge extends ObsidianPlugin {
     if (this.conflicts.length && oldFingerprint !== this.lastConflictFingerprint) {
       new Notice(`发现 ${this.conflicts.length} 篇笔记的同时间进度冲突，请在桥接设置中选择`, 8000);
     }
-    if (applied && this.settings.restoreActive) this.restoreCurrent();
+    if (applied && this.settings.restoreActive) return this.restoreCurrent({ notify: false });
+    return false;
   }
 
   async backupDb(rcp) {
@@ -522,14 +527,16 @@ module.exports = class ReadingProgressSyncBridge extends ObsidianPlugin {
     this.setReport({ phase: "冲突已选择，结果待下次同步上传", pendingUpload: true });
   }
 
-  restoreCurrent() {
+  restoreCurrent({ notify = true } = {}) {
     const { rcp } = this.deps();
     const view = this.app.workspace.getActiveViewOfType(MarkdownView);
     const path = view?.file?.path;
     const saved = path ? rcp.db[path] : null;
-    if (!saved) { new Notice("当前笔记没有已保存的阅读位置"); return; }
+    if (!saved) { new Notice("当前笔记没有已保存的阅读位置"); return false; }
     rcp.setEphemeralState(clone(saved));
     rcp.lastEphemeralState = clone(saved);
+    if (notify) new Notice("已跳转到保存的阅读位置", 2000);
+    return true;
   }
 
   async runSync() {
