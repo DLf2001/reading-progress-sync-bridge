@@ -13,13 +13,9 @@
 
 Independent companion integration, not a fork and not affiliated with the dependency authors or Obsidian. Dependency source files are not bundled or modified. Runtime wrappers use non-public interfaces (`syncRun`, `updateLastSyncMsg`, and the cursor-position database and writer). Wrappers are restored when disabled. Interface changes may require compatibility updates.
 
-The bridge does not make network requests, access service credentials, collect telemetry, or access files outside the vault. Reading metadata (note paths, positions, device names, and timestamps) are synchronized by the user's existing Remotely Save service. It does not upload note contents on its own. The README discloses privacy, clock, backup, and verification limitations.
+The bridge does not make network requests, access service credentials, collect telemetry, or access files outside the vault. Reading metadata (note paths, positions, device names, and timestamps) are synchronized by the user's existing Remotely Save service. It does not upload note contents on its own. The README describes privacy, clock handling, and backups.
 
-The source ships directly as CommonJS with no build step or runtime npm dependencies. Development dependencies are for tests and lint only. ESLint exceptions are documented in eslint.config.mjs; passing lint does not guarantee community acceptance.
-
-## Verification status
-
-Eighteen automated tests pass, including three isolated simulated devices. A real local export and readback of three records passed in Obsidian 1.14.4. See TESTING.md for the detailed test record and acceptance steps.
+The source ships directly as CommonJS with no build step or runtime npm dependencies. Development dependencies are for tests and lint only. ESLint exceptions are documented in eslint.config.mjs.
 
 ## Submission
 

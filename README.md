@@ -56,27 +56,13 @@ Remotely Save 必须连接同一个远程知识库，使用**双向同步**，�
 
 停用桥接插件会恢复依赖插件原来的运行时方法，不改写依赖插件的 `main.js`。已导入的进度数据保留。
 
-## 验证边界
+## 兼容说明
 
-本插件使用两个依赖的非公开运行时接口：`syncRun`、`updateLastSyncMsg`、位置数据库及写入方法。依赖更新后需重新验证。插件会检查接口是否存在，但不能保证未来版本的语义不变。
+本插件使用两个依赖的非公开运行时接口：`syncRun`、`updateLastSyncMsg`、位置数据库及写入方法。依赖升级可能需要对应的兼容更新。
 
-“核对完成”表示 Remotely Save 报告成功、本机导出文件回读一致，并且下载记录已校验合并；**不表示独立从云端重新下载并验证过服务器文件哈希**。
+“核对完成”表示 Remotely Save 报告成功、本机导出文件回读一致，并且下载记录已校验合并。
 
-第一版不支持 PDF。采用笔记相对路径匹配，不自动合并不同文件名的笔记。Markdown 内容和窗口尺寸变化后，恢复位置可能有偏差。手机端代码未使用 Node 原生模块，但需实机验证后才能声称手机兼容。
-
-## 开发与测试
-
-独立源码目录，不包含真实进度数据库、云配置或密钥。
-
-```sh
-npm ci --ignore-scripts
-npm test
-npm run lint
-```
-
-测试包含三台电脑的隔离数据、内存云端模拟、按时间合并、时钟异常、同时间冲突、磁盘持久化、同步失败、空跑和依赖方法恢复。模拟云端不能替代两台实体电脑及真实云服务联调。
-
-本次验证详情与多电脑验收步骤见 [TESTING.md](TESTING.md)。
+当前支持桌面版 Markdown，不支持 PDF 或手机端。采用笔记相对路径匹配，不自动合并不同文件名的笔记。Markdown 内容和窗口尺寸变化后，恢复位置可能有偏差。
 
 采用 MIT 许可证；作者 DLf2001。
 
@@ -87,7 +73,7 @@ Sync Markdown reading positions across multiple computers by connecting **Rememb
 ### Requirements and installation
 
 - Obsidian Desktop 1.14.4 or later. Mobile and PDF are not supported in this release.
-- Remember cursor position 1.0.16 and Remotely Save 0.5.25, installed and enabled. Other dependency versions need validation.
+- Remember cursor position 1.0.16 and Remotely Save 0.5.25, installed and enabled.
 - Remotely Save configured for bidirectional synchronization to the same remote vault on every computer, including the `阅读进度同步/` folder.
 
 Download `main.js`, `manifest.json`, and `styles.css` from [Releases](https://github.com/DLf2001/reading-progress-sync-bridge/releases/latest), put them in `<vault>/.obsidian/plugins/reading-progress-sync-bridge/`, and enable the plugin. Settings and notices currently use Simplified Chinese. Give each computer a distinct device name. Device IDs are stored locally, not in shared plugin settings.
@@ -96,12 +82,10 @@ The bridge exports saved positions before synchronization and validates and merg
 
 If configuration-directory synchronization is enabled, use the bridge's exclusion-rule button to exclude the original position database and this plugin's local state and backups. Keep the original position database in its default plugin directory. Enable automatic clock synchronization on every computer; timestamps alone cannot resolve small clock skew.
 
-### Privacy, compatibility, and verification
+### Privacy and compatibility
 
 This plugin makes no network requests, reads no service credentials, collects no telemetry, and accesses no files outside the vault. Shared records contain note paths, positions, device names, and reading timestamps, not note contents. Those metadata are synchronized through the service and encryption settings you configure in Remotely Save. A remote service may require an account or payment; this bridge itself is free.
 
-The integration wraps non-public runtime methods and restores them when disabled, without modifying dependency source files. Dependency updates may require changes. A successful check verifies the sync result callback, local file readback, and downloaded record validity; it is not an independent server-side hash audit.
-
-Eighteen automated tests, including a three-device simulated cloud, and an actual local export/readback have passed. See [TESTING.md](TESTING.md) for test records and acceptance steps. Keep backups. GitHub publication does not imply Obsidian community approval.
+The integration wraps non-public runtime methods and restores them when disabled, without modifying dependency source files. Dependency updates may require compatibility changes. The synchronization check covers the sync result callback, local file readback, and downloaded record validity. Keep backups. GitHub publication does not imply Obsidian community approval.
 
 This independent companion plugin is maintained by [DLf2001](https://github.com/DLf2001), is not affiliated with Obsidian or its dependencies, and is licensed under [MIT](LICENSE).
