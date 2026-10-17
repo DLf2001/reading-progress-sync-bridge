@@ -1,0 +1,19 @@
+{
+  "name": "reading-progress-sync-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "author": "DLf2001",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --check main.js && node --test tests/*.test.cjs",
+    "lint": "eslint main.js --max-warnings 0"
+  },
+  "engines": { "node": ">=22.13" },
+  "overrides": { "moment": "^2.31.0" },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "eslint-plugin-obsidianmd": "^0.4.2",
+    "globals": "^17.13.0"
+  }
+}
